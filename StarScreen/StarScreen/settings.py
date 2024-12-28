@@ -59,7 +59,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'movie.middlewere.CacheGETMiddlewere',
+    'movie.middlewere.CacheGETMiddleware',
+    'reviews.middleware.CacheGETMiddleware',
+    # 'reviews.middleware.CacheGETMiddlewere',
+    'Theatre_and_Seats.middleware.CacheGETMiddleware',
+
 ]
 
 ROOT_URLCONF = 'StarScreen.urls'
@@ -183,7 +187,7 @@ CACHES={
         'OPTIONS':{
             'CLIENT_CLASS':'django_redis.client.DefaultClient',
         },
-        'KEY_PREFIX':'theatre',
+        # 'KEY_PREFIX':'theatre',
     }
 }
 
@@ -212,3 +216,15 @@ CACHES={
 #     },
 #     'USE_SESSION_AUTH': False,
 # }
+
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+}

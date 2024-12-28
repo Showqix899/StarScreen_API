@@ -12,7 +12,7 @@ from .serializers import TheatreSerailaers,SeatSerializer,ScheduleSerializer
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from users.permissions import IsAdmin
 
 
@@ -95,7 +95,7 @@ class TheatreAdminView(GenericAPIView):
 class TheatreListView(GenericAPIView):
 
     serializer_class=TheatreSerailaers
-    permission_classes=[IsAuthenticated]
+    permission_classes=[AllowAny]
 
     def get(self,request):
 
@@ -113,7 +113,7 @@ class TheatreListView(GenericAPIView):
 class TheaterDetailsView(GenericAPIView):
      
     serializer_class=TheatreSerailaers
-    permission_classes=[IsAuthenticated]
+    permission_classes=[AllowAny]
 
 
     def get(self,request,pk):
@@ -201,7 +201,7 @@ class SeatAdminView(GenericAPIView):
 #seat list view
 class SeatListView(GenericAPIView):
      
-    permission_classes=[IsAuthenticated]
+    permission_classes=[AllowAny]
     serializer_class=SeatSerializer
 
     def get(self,request):
@@ -242,7 +242,7 @@ class SeatDetailsView(GenericAPIView):
 class ScheduleSetUpAdminView(GenericAPIView):
 
      serializer_class=ScheduleSerializer
-     permission_classes=[IsAuthenticated,IsAdmin]
+     permission_classes=[IsAuthenticated,IsAdmin,AllowAny]
 
 
      def post(self,request):
@@ -301,6 +301,20 @@ class ScheduleSetUpAdminView(GenericAPIView):
         
         schedule.delete()
         return Response({"message":"Item successfully deleted"})
+     
+
+class ScheduleListView(GenericAPIView):
+
+     permission_classes=[AllowAny]
+     def get(self,request):
+
+          try:
+               schedules=Schedule.objects.all()
+
+               seriailzer=ScheduleSerializer(schedules,many=True)
+               return Response(seriailzer.data,status=status.HTTP_200_OK)
+          except Schedule.DoesNotExist:
+               return Response("Item couldn't be found")
                
         
             

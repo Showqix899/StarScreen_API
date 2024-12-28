@@ -6,7 +6,8 @@ from .views import (
     AdminUserRegistrationView,
     LoginView,
     LogoutView,
-    # VerifyEmailView
+    # VerifyEmailView,
+    UserListView
 )
 
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -17,6 +18,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     # path('verify-email/', VerifyEmailView.as_view(), name='verify-email'),
+    path('user-list/',UserListView.as_view(),name='user-list')
 ]
 
 

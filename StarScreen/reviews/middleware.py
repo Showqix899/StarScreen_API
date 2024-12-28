@@ -23,7 +23,9 @@ class CacheGETMiddleware:
                 return response
             
             response=self.get_response(request)
-            cache.set(cache_key,response,timeout=300)
+            if response.status_code==200:
+
+                cache.set(cache_key,response.content,timeout=300)
             return response
         
 

@@ -1,7 +1,7 @@
 from django.core.cache import cache
 
 
-class CacheGETMiddleware:
+class CacheGETMiddlewere:
 
     def __init__(self,get_response):
 

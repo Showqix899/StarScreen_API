@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import ValidationError
 
 
@@ -182,6 +183,26 @@ class LogoutView(APIView):
             return Response({"message": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": str(e)},status=status.HTTP_205_RESET_CONTENT)
+        
+
+
+#users list view
+class UserListView(GenericAPIView):
+
+    permission_classes=[AllowAny]
+
+    def get(self,request):
+
+        try:
+            users=User.objects.all()
+
+            serializer=UserSerializer(users,many=True)
+
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        
+        except User.DoesNotExist:
+
+            return Response("there is no user")
     
 
 
