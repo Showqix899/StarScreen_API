@@ -14,8 +14,6 @@ from users.serializers import UserSerializer
 
 #review serializer
 class ReviewSerializer(serializers.ModelSerializer):
-    movie = MovieSerializer(read_only=True)  # Nested movie details for the response
-
     class Meta:
 
         model=Review
@@ -23,23 +21,18 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at', 'user']
 
 
-    # #custom de serialization
-    # def validate(self, attrs):
+    def validate(self, data):
+
+        if not data.get('review'):
+            raise serializers.ValidationError("Review is required")
         
-    #     request = self.context.get('request')  # Get request context
-    #     movie_id = self.initial_data.get('movie')  # Fetch movie ID from raw input data
-
-    #     if not movie_id:
-    #         raise serializers.ValidationError({"movie": "This field is required."})
-
-    #     try:
-    #         attrs['movie'] = Movie.objects.get(id=movie_id)
-    #     except Movie.DoesNotExist:
-    #         raise serializers.ValidationError({"movie": "Invalid movie ID."})
-
-    #     attrs['user'] = request.user  # Attach the authenticated user to the validated data
-    #     return attrs
-
+        if not data.get('movie'):
+            raise serializers.ValidationError("Movie is required")
+        
+        if not data.get('user'):
+            raise serializers.ValidationError("User is required")
+        
+        return super().validate(data)
 
     
     #to assign user automaticly

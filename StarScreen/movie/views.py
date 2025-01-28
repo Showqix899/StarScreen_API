@@ -22,7 +22,6 @@ from users.permissions import IsAdmin
 # Create your views here.
 
 #admin Movie Api view
-@method_decorator(csrf_exempt, name='dispatch')
 class AdminMovieApiView(APIView):
 
     #checking if the user is admin or not

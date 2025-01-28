@@ -14,307 +14,67 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from users.permissions import IsAdmin
+from rest_framework import viewsets
 
 
 # Create your views here.
 
 #theatre  view for only admin
-class TheatreAdminView(GenericAPIView):
+class TheatreAdminView(viewsets.ModelViewSet):
 
-    serializer_class=TheatreSerailaers
-    permission_classes=[IsAuthenticated,IsAdmin]
+     queryset=Theatre.objects.all()
+     serializer_class=TheatreSerailaers
 
-    def post(self,request):
-
-        data=request.data
-
-        serializer=TheatreSerailaers(data=data)
-
-        if serializer.is_valid():
-
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+     def get_permissions(self):
+          if self.action in ['list','retrieve']:
+               permission_classes = [AllowAny]
+          else:
+               permission_classes=[IsAuthenticated,IsAdmin]
+          return [permission() for permission in permission_classes]
     
-
-
-    def put(self,request,pk):
-         
-        try:
-             theatre=get_object_or_404(Theatre,id=pk)
-        except Theatre.DoesNotExist:
-             
-             return Response({"message":"Couldn't be found"})
-        
-        serializer=TheatreSerailaers(theatre,data=request.data)
-
-        if serializer.is_valid():
-             
-             serializer.save()
-
-             return Response(serializer.data,status=status.HTTP_205_RESET_CONTENT)
-        
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    
-    def patch(self,request,pk):
-         
-        try:
-             theatre=get_object_or_404(Theatre,id=pk)
-        except Theatre.DoesNotExist:
-             
-             return Response({"message":"Couldn't be found"})
-        
-        serializer=TheatreSerailaers(theatre,data=request.data,partial=True)
-
-        if serializer.is_valid():
-             
-             serializer.save()
-
-             return Response(serializer.data,status=status.HTTP_205_RESET_CONTENT)
-        
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    
-    def delete(self,request,pk):
-         
-        try:
-             theatre=get_object_or_404(Theatre,id=pk)
-        except Theatre.DoesNotExist:
-             
-             return Response({"message":"Couldn't be found"})
-        
-        theatre.delete()
-        return Response({"message":"Item successfully deleted"})
-        
-
-        
-
-
-    
-
-#theatre get view general purpose
-class TheatreListView(GenericAPIView):
-
-    serializer_class=TheatreSerailaers
-    permission_classes=[AllowAny]
-
-    def get(self,request):
-
-            theatres=Theatre.objects.all()
-
-            if theatres:
-
-                serializer=TheatreSerailaers(theatres,many=True)
-
-                return Response(serializer.data,status=status.HTTP_200_OK) 
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    
-
-#theatre detail view
-class TheaterDetailsView(GenericAPIView):
-     
-    serializer_class=TheatreSerailaers
-    permission_classes=[AllowAny]
-
-
-    def get(self,request,pk):
-         
-        try:
-             theatre=get_object_or_404(Theatre,id=pk)
-        except Theatre.DoesNotExist:
-             
-             return Response({"message":"Couldn't be found"})
-        
-
-        serializer=TheatreSerailaers(theatre,many=True)
-
-        return Response(serializer.data,status=status.HTTP_200_OK) 
-
-
-            
 
 
 #Seat View admin 
-class SeatAdminView(GenericAPIView):
-     
+class SeatAdminView(viewsets.ModelViewSet):
+     queryset= Seat.objects.all()
      serializer_class=SeatSerializer
-     permission_classes=[IsAuthenticated,IsAdmin]
 
-     def post(self,request):
+     def get_permissions(self):
           
-          data=request.data
+          if self.action in ['list','retrieve']:
+               permission_classes= [AllowAny]
 
-          serializer=SeatSerializer(data=data)
+          else:
 
-          if serializer.is_valid():
-               
-               serializer.save()
+               permission_classes=[IsAuthenticated,IsAdmin]
+          return [permission() for permission in permission_classes]
 
-               return Response(serializer.data,status=status.HTTP_201_CREATED)
-          return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
      
-
-     def put(self,request,pk):
-          
-        try:
-            seat=get_object_or_404(Seat,id=pk)
-        except Seat.DoesNotExist:
-             return Response({"message":"Couldn't be found"})
-        
-        serializer=SeatSerializer(seat,data=request.data)
-
-        if serializer.is_valid():
-             
-             serializer.save()
-             return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-     
-
-     def patch(self,request,pk):
-          
-        try:
-            seat=get_object_or_404(Seat,id=pk)
-        except Seat.DoesNotExist:
-             return Response({"message":"Couldn't be found"})
-        
-        serializer=SeatSerializer(seat,data=request.data,partial=True)
-
-        if serializer.is_valid():
-             
-             serializer.save()
-             return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-     
-
-     def delete(self,request,pk):
-         
-        try:
-             seat=get_object_or_404(Seat,id=pk)
-        except Seat.DoesNotExist:
-             
-             return Response({"message":"Couldn't be found"})
-        
-        seat.delete()
-        return Response({"message":"Item successfully deleted"})
      
 
 
-#seat list view
-class SeatListView(GenericAPIView):
-     
-    permission_classes=[AllowAny]
-    serializer_class=SeatSerializer
-
-    def get(self,request):
-          
-        seats=Seat.objects.all()
-
-        if seats:
-               
-            serializer=SeatSerializer(seats,many=True)
-
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    
 
 
-#seat detail view
-class SeatDetailsView(GenericAPIView):
-     
-    serializer_class=SeatSerializer
-    permission_classes=[IsAuthenticated]
-
-
-    def get(self,request,pk):
-         
-        try:
-             seat=get_object_or_404(Seat,id=pk)
-        except Seat.DoesNotExist:
-             
-             return Response({"message":"Couldn't be found"})
-        
-
-        serializer=TheatreSerailaers(seat,many=True)
-
-        return Response(serializer.data,status=status.HTTP_200_OK)
-    
 
 #schedule view
-class ScheduleSetUpAdminView(GenericAPIView):
+class ScheduleSetUpAdminView(viewsets.ModelViewSet):
 
+     queryset=Schedule.objects.all()
      serializer_class=ScheduleSerializer
-     permission_classes=[IsAuthenticated,IsAdmin,AllowAny]
+
+     def get_permissions(self):
+          if self.action in ['list','retrieve']:
+               permission_classes = [AllowAny]
+          else:
+               permission_classes=[IsAuthenticated,IsAdmin]
+          return [permission() for permission in permission_classes]
+    
 
 
-     def post(self,request):
-
-          data=request.data
-
-          serializer=ScheduleSerializer(data=data)
-
-          if serializer.is_valid():
-
-               serializer.save()
-               return Response(serializer.data,status=status.HTTP_201_CREATED)
-          return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+     
      
 
 
-     def put(self,request,pk):
-          
-        try:
-            schedule=get_object_or_404(Schedule,id=pk)
-        except Schedule.DoesNotExist:
-             return Response({"message":"Couldn't be found"})
-        
-        serializer=ScheduleSerializer(schedule,data=request.data)
-
-        if serializer.is_valid():
-             
-             serializer.save()
-             return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-     
-
-     def patch(self,request,pk):
-          
-        try:
-            schedule=get_object_or_404(Schedule,id=pk)
-        except Schedule.DoesNotExist:
-             return Response({"message":"Couldn't be found"})
-        
-        serializer=ScheduleSerializer(schedule,data=request.data,partial=True)
-
-        if serializer.is_valid():
-             
-             serializer.save()
-             return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-     
-
-     def delete(self,request,pk):
-         
-        try:
-             schedule=get_object_or_404(Schedule,id=pk)
-        except Schedule.DoesNotExist:
-             
-             return Response({"message":"Couldn't be found"})
-        
-        schedule.delete()
-        return Response({"message":"Item successfully deleted"})
-     
-
-class ScheduleListView(GenericAPIView):
-
-     permission_classes=[AllowAny]
-     def get(self,request):
-
-          try:
-               schedules=Schedule.objects.all()
-
-               seriailzer=ScheduleSerializer(schedules,many=True)
-               return Response(seriailzer.data,status=status.HTTP_200_OK)
-          except Schedule.DoesNotExist:
-               return Response("Item couldn't be found")
                
         
             
